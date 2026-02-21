@@ -1,0 +1,44 @@
+html {
+    background-color: #2f2f2f;
+    color: #eee;
+    height: 100%;
+    font-family: Consolas, monospace;
+}
+
+#drivesList button {
+    background-color: #333f46;
+    padding: 5px 10px 5px 10px;
+    margin: 0 3px 0 3px;
+    border: 1px solid #222;
+    border-radius: 2px;
+    color: #eee;
+    font-size: 1.5rem; 
+}
+
+#drivesList button:hover {
+    background-color: #4c606b;
+}
+
+#drivesList {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+#output button, #outputFolder button {
+    display: block;
+    background-color: #333f46;
+    padding: 2px 5px 2px 5px;
+    margin: 3px 0 3px 0;
+    border: 1px solid #222;
+    border-radius: 2px;
+    color: #eee;
+}
+
+#output button:hover {
+    background-color: #4c606b;
+}
+
+#main {
+    display:flex;
+    gap: 100px;
+}
