@@ -1,12 +1,13 @@
 import os
 import json
 from datetime import datetime
-
 import ctypes
 from ctypes import wintypes
 import winreg
-
 import time
+import gzip
+import base64
+import argparse
 #---------------------------------------------
 def get_unc_path(drive_letter):
     drive_letter = drive_letter.strip().rstrip('\\')
@@ -97,7 +98,7 @@ def scan_drive(drive_path):
     else:
         drive_label = get_drive_label(drive_path)
 
-    print(drive_path + " - " + drive_label)
+    print(drive_path + " (" + drive_label + ")")
 
     result = {
         "drive": drive_path,
@@ -120,7 +121,7 @@ def scan_drive(drive_path):
                     result["folders"][entry.name] = scan_dir(
                         entry.path,
                         depth=1,
-                        max_depth=3
+                        max_depth=args.depth
                     )
 
     except (PermissionError, OSError) as e:
@@ -131,8 +132,22 @@ def scan_drive(drive_path):
 
     return result
 #---------------------------------------------
-
+parser = argparse.ArgumentParser(description="Stores folder and file names on selected drives")
+parser.add_argument("-dc", action="store_true", help="disable compression")
+parser.add_argument("-d", "--depth", type=int, default=3, help="Scan depth")
+parser.add_argument(
+    "-drives", "--drivesArg", 
+    nargs="+", 
+    type=str.upper,
+    help="List of drive letters you want to scan"
+)
+args = parser.parse_args()
+#---------------------------------------------
 drives = ["C:\\","D:\\", "E:\\", "F:\\", "G:\\", "H:\\", "M:\\", "N:\\", "S:\\", "T:\\", "U:\\", "Z:\\"]
+if args.drivesArg:
+    drives = [f"{d}:\\" for d in args.drivesArg]
+
+print(f"Scanning drives: {drives}")
 
 data = []
 
@@ -150,10 +165,18 @@ for drive in drives:
     print(f"{(time.perf_counter() - time_drive_start) * 1000:.2f} ms")
     time_drive_start = time.perf_counter()
 
+#gzip
+json_str = json.dumps(data)
+compressed_bytes = gzip.compress(json_str.encode('utf-8'))
+b64_encoded = base64.b64encode(compressed_bytes).decode('utf-8')
+
 with open("drives_data.js", "w", encoding="utf-8") as f:
-    f.write("const jsonData = ")
-    json.dump(data, f, indent=2)
-    f.write(";")
+    if args.dc:
+        f.write("const compressed = false; const jsonData = ")
+        json.dump(data, f, indent=2)
+        f.write(";")
+    else:
+        f.write(f"let jsonData; const compressed = true; const compressedData = '{b64_encoded}';")
 #---------------------------------------------
 print("done")
 time_end = time.perf_counter()
