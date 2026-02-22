@@ -11,25 +11,52 @@
 <h2 id="selectedDrive"></h2>
 
 <div id="main">
-  <div id="output"></div>
-  <div id="outputFolder"></div>
+  <div class="output" id="output"></div>
+  <div class="output" id="outputFolder"></div>
+  <div class="output" id="outputSubfolder"></div>
 </div>
 
 
 <script src="drives_data.js"></script>
 <script>
-  //-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
   let output = document.getElementById("output");
   let outputFolder = document.getElementById("outputFolder");
+  let outputSubfolder = document.getElementById("outputSubfolder");
   let drivesList = document.getElementById("drivesList");
   let selectedDrive = document.getElementById("selectedDrive");
   let lastBtn = false
+  let lastSubBtn = false
+//-----------------------------------------------------------------------
+  let openSubfolder = function(idx, name , subname, buttonEl) {
+    if (lastSubBtn !== false) {
+      lastSubBtn.textContent = lastSubBtn.textContent.slice(0, -7)
+      lastSubBtn.classList.remove("btnSelected")
+    }
+    buttonEl.textContent = subname+" =====>"
+    buttonEl.classList.add("btnSelected")
+    lastSubBtn = buttonEl
+
+    let html = ""
+    let folder = jsonData[idx].folders[name].folders[subname]
+
+    for (const [key, value] of Object.entries(folder.folders)) {
+      html += `<button>${key}</button>`;
+    }
+
+    for (let i = 0; i<folder.files.length; i++) {
+      html += "<div>"+folder.files[i]+"</div>"
+    }
+    outputSubfolder.innerHTML = html
+  }
 //-----------------------------------------------------------------------
   let openFolder = function(idx, name, buttonEl) {
     if (lastBtn !== false) {
       lastBtn.textContent = lastBtn.textContent.slice(0, -7)
+      lastBtn.classList.remove("btnSelected")
     }
     buttonEl.textContent = name+" =====>"
+    buttonEl.classList.add("btnSelected")
     lastBtn = buttonEl
 
     let html = ""
@@ -38,12 +65,16 @@
     for (let i = 0; i<folder.folders.length; i++) {
       html += "<button>"+folder.folders[i]+"</button>"
     }
+    for (const [key, value] of Object.entries(jsonData[idx].folders[name].folders)) {
+      html += `<button onclick="openSubfolder(${idx},'${name}', '${key}', this)">${key}</button>`;
+    }
 
     for (let i = 0; i<folder.files.length; i++) {
       html += "<div>"+folder.files[i]+"</div>"
     }
 
      outputFolder.innerHTML = html
+     outputSubfolder.innerHTML = ""
   }
 //-----------------------------------------------------------------------
   let selectDrive = function(idx) {
@@ -59,6 +90,8 @@
       html += "<div>"+jsonData[idx].root_files[i]+"</div>"
     }
     output.innerHTML = html
+    outputFolder.innerHTML = ""
+    outputSubfolder.innerHTML = ""
   }
 //-----------------------------------------------------------------------
   for (let i = 0; i < jsonData.length; i++) {

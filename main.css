@@ -24,7 +24,7 @@ html {
     flex-wrap: nowrap;
 }
 
-#output button, #outputFolder button {
+#output button, #outputFolder button, #outputSubfolder button {
     display: block;
     background-color: #333f46;
     padding: 2px 5px 2px 5px;
@@ -34,11 +34,24 @@ html {
     color: #eee;
 }
 
-#output button:hover {
+#output button:hover, #outputFolder button:hover {
     background-color: #4c606b;
 }
 
 #main {
     display:flex;
-    gap: 100px;
+}
+
+.output {
+    margin: 0 30px 0 30px;
+    padding: 5px 10px 5px 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    min-width: 400px;
+}
+
+.btnSelected {
+    background-color: #4b6e4b !important;
+}
+.btnSelected:hover {
+    background-color: #679867 !important;
 }

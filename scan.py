@@ -57,6 +57,39 @@ def get_drive_label(drive_letter):
     return volumeNameBuffer.value
 
 #---------------------------------------------
+def scan_dir(path, depth, max_depth):
+    info = {
+        "folders": {},
+        "files": []
+    }
+
+    if depth >= max_depth:
+        return info
+
+    try:
+        with os.scandir(path) as entries:
+            for entry in entries:
+                if entry.is_symlink():
+                    continue
+
+                if entry.is_file():
+                    info["files"].append(entry.name)
+
+                elif entry.is_dir():
+                    info["folders"][entry.name] = scan_dir(
+                        entry.path,
+                        depth + 1,
+                        max_depth
+                    )
+
+    except (PermissionError, OSError) as e:
+        info["error"] = str(e)
+
+    info["files"].sort()
+    info["folders"] = dict(sorted(info["folders"].items()))
+
+    return info
+#---------------------------------------------
 def scan_drive(drive_path):
     label = get_local_label_from_reg(drive_path)
     if label:
@@ -64,8 +97,7 @@ def scan_drive(drive_path):
     else:
         drive_label = get_drive_label(drive_path)
 
-
-    print(drive_path+" - "+drive_label)
+    print(drive_path + " - " + drive_label)
 
     result = {
         "drive": drive_path,
@@ -75,40 +107,27 @@ def scan_drive(drive_path):
         "folders": {}
     }
 
-    with os.scandir(drive_path) as root_entries:
-        for entry in root_entries:
-            if entry.is_file():
-                result["root_files"].append(entry.name)
-
-            elif entry.is_dir():
-            
+    try:
+        with os.scandir(drive_path) as root_entries:
+            for entry in root_entries:
                 if entry.is_symlink():
-                    result["folders"][entry.name] = {"error": "skipped symbolic link"}
                     continue
-                    
-                folder_info = {
-                    "folders": [],
-                    "files": []
-                }
 
-                try:
-                    with os.scandir(entry.path) as sub_entries:
-                        for sub in sub_entries:
-                            if sub.is_symlink():
-                                continue
-                            if sub.is_dir():
-                                folder_info["folders"].append(sub.name)
-                            elif sub.is_file():
-                                folder_info["files"].append(sub.name)
-                except (PermissionError, OSError) as e:
-                    folder_info["error"] = str(e)
+                if entry.is_file():
+                    result["root_files"].append(entry.name)
 
-                result["folders"][entry.name] = folder_info
+                elif entry.is_dir():
+                    result["folders"][entry.name] = scan_dir(
+                        entry.path,
+                        depth=1,
+                        max_depth=3
+                    )
+
+    except (PermissionError, OSError) as e:
+        result["error"] = str(e)
 
     result["root_files"].sort()
-    for f in result["folders"].values():
-        f["folders"].sort()
-        f["files"].sort()
+    result["folders"] = dict(sorted(result["folders"].items()))
 
     return result
 #---------------------------------------------
