@@ -22,8 +22,14 @@
   let outputFolder = document.getElementById("outputFolder");
   let drivesList = document.getElementById("drivesList");
   let selectedDrive = document.getElementById("selectedDrive");
+  let lastBtn = false
 
-  let openFolder = function(idx,name) {
+  let openFolder = function(idx, name, buttonEl) {
+    if (lastBtn !== false) {
+      lastBtn.textContent = lastBtn.textContent.slice(0, -7)
+    }
+    buttonEl.textContent = name+" =====>"
+    lastBtn = buttonEl
 
     let html = ""
     let folder = jsonData[idx].folders[name]
@@ -46,7 +52,7 @@
     selectedDrive.textContent = jsonData[idx].drive
 
     for (const [key, value] of Object.entries(jsonData[idx].folders)) {
-      html += `<button onclick="openFolder(${idx}, '${key}')">${key}</button>`;
+      html += `<button onclick="openFolder(${idx}, '${key}', this)">${key}</button>`;
     }
 
     for (let i = 0; i<jsonData[idx].root_files.length; i++) {
