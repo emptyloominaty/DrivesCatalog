@@ -6,19 +6,23 @@
   <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 <body>
-
+<div id="flex">
+<button id="settingsBtn" onclick="toggleSettingsWindow()">🔧</button>
 <div id="drivesList"></div>
-<h2 id="selectedDrive"></h2>
-
+</div>
 <div id="main">
   <div class="output" id="output"></div>
   <div class="output" id="outputFolder"></div>
   <div class="output" id="outputSubfolder"></div>
 </div>
 
+<div id="settings">
+<button onclick="toggleSetting('openFoldersOnMouseOver',this)">openFoldersOnMouseOver: on</button>
+<button onclick="toggleSetting('animations',this)">animations: off</button>
+</div>
 
 <script src="drives_data.js" defer></script>
 <script src="main.js" defer></script>
-
+<script src="settings.js" defer></script>
 </body>
 </html>
