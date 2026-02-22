@@ -1,12 +1,12 @@
-scan.py
+* scan.py <br>
 
-Disable compression
+* Disable compression <br>
 -dc 
 
-Depth
+* Depth <br>
 -d x
 
-Select drives to scan
--drives C D
--drives C
--drives C D E F G H
+* Select drives to scan <br>
+-drives C D <br>
+-drives C <br>
+-drives C D E F G H 
