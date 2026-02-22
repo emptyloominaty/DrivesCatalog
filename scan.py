@@ -165,10 +165,7 @@ for drive in drives:
     print(f"{(time.perf_counter() - time_drive_start) * 1000:.2f} ms")
     time_drive_start = time.perf_counter()
 
-#gzip
-json_str = json.dumps(data)
-compressed_bytes = gzip.compress(json_str.encode('utf-8'))
-b64_encoded = base64.b64encode(compressed_bytes).decode('utf-8')
+
 
 with open("drives_data.js", "w", encoding="utf-8") as f:
     if args.dc:
@@ -176,6 +173,10 @@ with open("drives_data.js", "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
         f.write(";")
     else:
+        #gzip
+        json_str = json.dumps(data)
+        compressed_bytes = gzip.compress(json_str.encode('utf-8'))
+        b64_encoded = base64.b64encode(compressed_bytes).decode('utf-8')
         f.write(f"let jsonData; const compressed = true; const compressedData = '{b64_encoded}';")
 #---------------------------------------------
 print("done")
