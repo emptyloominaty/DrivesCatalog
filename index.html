@@ -18,12 +18,13 @@
 
 <script src="drives_data.js"></script>
 <script>
+  //-----------------------------------------------------------------------
   let output = document.getElementById("output");
   let outputFolder = document.getElementById("outputFolder");
   let drivesList = document.getElementById("drivesList");
   let selectedDrive = document.getElementById("selectedDrive");
   let lastBtn = false
-
+//-----------------------------------------------------------------------
   let openFolder = function(idx, name, buttonEl) {
     if (lastBtn !== false) {
       lastBtn.textContent = lastBtn.textContent.slice(0, -7)
@@ -44,8 +45,7 @@
 
      outputFolder.innerHTML = html
   }
-
-
+//-----------------------------------------------------------------------
   let selectDrive = function(idx) {
     let html = ""
     
@@ -60,13 +60,7 @@
     }
     output.innerHTML = html
   }
-
-
-
-
-
-
-
+//-----------------------------------------------------------------------
   for (let i = 0; i < jsonData.length; i++) {
     let drive = jsonData[i]
     let btn = document.createElement("button")
@@ -80,7 +74,7 @@
     btn.onclick = () => selectDrive(i)
     drivesList.appendChild(btn);
   }
-
+//-----------------------------------------------------------------------
 
 
 
